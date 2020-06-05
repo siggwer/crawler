@@ -278,10 +278,8 @@ class CrawlerController implements LoggerAwareInterface
     {
         if ($disabled) {
             GeneralUtility::writeFile($this->processFilename, '');
-        } else {
-            if (is_file($this->processFilename)) {
-                unlink($this->processFilename);
-            }
+        } else if (is_file($this->processFilename)) {
+            unlink($this->processFilename);
         }
     }
 

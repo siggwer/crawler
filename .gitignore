@@ -27,6 +27,7 @@ nbproject
 .Build
 composer.lock
 .php_cs.cache
+infection.log
 
 var/log
 var/tests

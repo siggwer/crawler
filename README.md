@@ -7,6 +7,7 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/AOEpeople/crawler/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/AOEpeople/crawler/?branch=master)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/aoepeople/crawler.svg)](http://isitmaintained.com/project/aoepeople/crawler "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/aoepeople/crawler.svg)](http://isitmaintained.com/project/aoepeople/crawler "Percentage of issues still open")
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FAOEpeople%2Fcrawler%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/AOEpeople/crawler/master)
 
 Libraries and scripts for crawling the TYPO3 page tree. Used for re-caching, re-indexing, publishing applications etc.
 

@@ -57,7 +57,7 @@ class QueueExecutorTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * test
      */
     public function invalidArgumentsReturnErrorInExecuteQueueItem(): void
     {

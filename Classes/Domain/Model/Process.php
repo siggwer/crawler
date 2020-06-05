@@ -266,7 +266,7 @@ class Process extends AbstractEntity
     {
         $all = $this->getAssignedItemsCount();
         if ($all <= 0) {
-            return 0;
+            return 0.0;
         }
 
         $res = round((100 / $all) * $this->getAmountOfItemsProcessed());

@@ -236,7 +236,7 @@ class CrawlerControllerTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * test
      *
      * @dataProvider checkIfPageShouldBeSkippedDataProvider
      */
@@ -449,6 +449,10 @@ class CrawlerControllerTest extends UnitTestCase
     public function setAndGetDisabledDataProvider()
     {
         return [
+            //'setDisabeld with no param' => [
+            //    'disabled' => null,
+            //    'expected' => true,
+            //],
             'setDisabled with true param' => [
                 'disabled' => true,
                 'expected' => true,

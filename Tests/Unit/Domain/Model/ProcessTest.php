@@ -160,12 +160,12 @@ class ProcessTest extends UnitTestCase
             'CountItemsAssigned is negative number' => [
                 'countItemsAssigned' => -2,
                 'countItemsProcessed' => 8,
-                'expectedProgress' => 0,
+                'expectedProgress' => 0.0,
             ],
             'CountItemsAssigned is 0' => [
                 'countItemsAssigned' => 0,
                 'countItemsProcessed' => 8,
-                'expectedProgress' => 0,
+                'expectedProgress' => 0.0,
             ],
             'CountItemsAssigned is higher than countItemsProcessed' => [
                 'countItemsAssigned' => 100,
@@ -181,7 +181,27 @@ class ProcessTest extends UnitTestCase
                 'countItemsAssigned' => 15,
                 'countItemsProcessed' => 20,
                 'expectedProgress' => 100.0,
+            ], 
+            'sdf' => [
+                'countItemsAssigned' => 100,
+                'countItemsProcessed' => 100,
+                'expectedProgress' => 100.0 
             ],
+            'result higher than 100, Testing the round if $res > 100 ' => [
+                'countItemsAssigned' => 100,
+                'countItemsProcessed' => 101,
+                'expectedProgress' => 100.0,
+            ],
+            'Comma numbers' => [
+                'countItemsAssigned' => 15.56,
+                'countItemsProcessed' => 14,
+                'expectedProgress' => 93.0,
+            ],
+            'Comma number that would round down' => [
+                'countItemsAssigned' => 14.3,
+                'countItemsProcessed' => 14,
+                'expectedProgress' => 100.0
+            ]
         ];
     }
 

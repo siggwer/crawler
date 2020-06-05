@@ -132,7 +132,18 @@ jobs:
         - composer install
         - php .Build/bin/codecept run
 
-    # Static Analysis
+    # Mutation Tests
+    -
+      stage: test
+      name: "Mutation"
+      php: 7.2
+      env:
+        - TYPO3_VERSION=^9.5
+      script:
+        - .Build/bin/infection --min-msi=7 --threads=4
+
+
+      # Static Analysis
     -
       stage: static
       name: "Rector CI"

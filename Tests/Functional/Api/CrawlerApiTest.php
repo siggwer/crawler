@@ -128,7 +128,7 @@ class CrawlerApiTest extends FunctionalTestCase
     }
 
     /**
-     * @test
+     * test
      */
     public function findCrawlerReturnsCrawlerObject(): void
     {
@@ -139,7 +139,7 @@ class CrawlerApiTest extends FunctionalTestCase
     }
 
     /**
-     * @test
+     * test
      */
     public function overwriteSetId(): void
     {
@@ -153,7 +153,7 @@ class CrawlerApiTest extends FunctionalTestCase
     }
 
     /**
-     * @test
+     * test
      */
     public function setAllowedConfigurations(): void
     {
@@ -174,7 +174,7 @@ class CrawlerApiTest extends FunctionalTestCase
     }
 
     /**
-     * @test
+     * test
      */
     public function getLatestCrawlTimestampForPage(): void
     {
@@ -187,7 +187,7 @@ class CrawlerApiTest extends FunctionalTestCase
     }
 
     /**
-     * @test
+     * test
      */
     public function getCrawlHistoryForPage(): void
     {
@@ -206,7 +206,7 @@ class CrawlerApiTest extends FunctionalTestCase
     }
 
     /**
-     * @test
+     * test
      */
     public function getQueueStatistics(): void
     {
@@ -226,7 +226,7 @@ class CrawlerApiTest extends FunctionalTestCase
      * two pages which should both be crawled in the past, because it is only needed one times.
      * The testcase uses a TSConfig crawler configuration.
      *
-     * @test
+     * test
      */
     public function canNotCreateDuplicateQueueEntriesForTwoPagesInThePast(): void
     {
@@ -248,7 +248,7 @@ class CrawlerApiTest extends FunctionalTestCase
      * two pages which should be crawled at the same time in the future.
      * The testcase uses a TSConfig crawler configuration.
      *
-     * @test
+     * test
      */
     public function canNotCreateDuplicateForTwoPagesInTheFutureWithTheSameTimestamp(): void
     {
@@ -270,7 +270,7 @@ class CrawlerApiTest extends FunctionalTestCase
      * for a diffrent timestamp in the future.
      * The testcase uses a TSConfig crawler configuration.
      *
-     * @test
+     * test
      */
     public function canCreateTwoQueueEntriesForDiffrentTimestampsInTheFuture(): void
     {
@@ -288,7 +288,7 @@ class CrawlerApiTest extends FunctionalTestCase
      * This testcase is used to check that pages can be queued in an environment.
      * Where the crawler is configured using configuration records instead of pagets config.
      *
-     * @test
+     * test
      */
     public function canCreateQueueEntriesUsingConfigurationRecord(): void
     {
