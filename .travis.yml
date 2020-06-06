@@ -136,7 +136,7 @@ jobs:
     -
       stage: test
       name: "Mutation"
-      php: 7.2
+      php: 7.4
       env:
         - TYPO3_VERSION=^9.5
       script:
