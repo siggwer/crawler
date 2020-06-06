@@ -139,6 +139,8 @@ jobs:
       php: 7.4
       env:
         - TYPO3_VERSION=^9.5
+      before_install:
+        - echo "keep xdebug"
       script:
         - .Build/bin/infection --min-msi=7 --threads=4
 
