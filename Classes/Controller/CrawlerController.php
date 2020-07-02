@@ -251,6 +251,16 @@ class CrawlerController implements LoggerAwareInterface
         $this->maximumUrlsToCompile = MathUtility::forceIntegerInRange($this->extensionSettings['maxCompileUrls'], 1, 1000000000, 10000);
     }
 
+    public function getMaximumUrlsToCompile(): int
+    {
+        return $this->maximumUrlsToCompile;
+    }
+
+    public function setMaximumUrlsToCompile(int $maximumUrlsToCompile): void
+    {
+        $this->maximumUrlsToCompile = $maximumUrlsToCompile;
+    }
+
     /**
      * Method to set the accessMode can be gui, cli or cli_im
      *
@@ -278,7 +288,7 @@ class CrawlerController implements LoggerAwareInterface
     {
         if ($disabled) {
             GeneralUtility::writeFile($this->processFilename, '');
-        } else if (is_file($this->processFilename)) {
+        } elseif (is_file($this->processFilename)) {
             unlink($this->processFilename);
         }
     }
@@ -859,10 +869,8 @@ class CrawlerController implements LoggerAwareInterface
         $newUrls = [];
         foreach ($urls as $url) {
             foreach ($valueSet as $val) {
-                $newUrls[] = $url . (strcmp((string) $val, '') ? '&' . rawurlencode($varName) . '=' . rawurlencode((string) $val) : '');
-
-                if (count($newUrls) > $this->maximumUrlsToCompile) {
-                    break;
+                if (count($newUrls) < $this->maximumUrlsToCompile) {
+                    $newUrls[] = $url . (strcmp((string) $val, '') ? '&' . rawurlencode($varName) . '=' . rawurlencode((string) $val) : '');
                 }
             }
         }

@@ -57,12 +57,28 @@ class BackendModuleTest extends UnitTestCase
         );
 
         self::assertArrayHasKey('depth', $modMenu);
+        self::assertArrayHasKey('0', $modMenu['depth']);
+        self::assertArrayHasKey('1', $modMenu['depth']);
+        self::assertArrayHasKey('2', $modMenu['depth']);
+        self::assertArrayHasKey('3', $modMenu['depth']);
+        self::assertArrayHasKey('4', $modMenu['depth']);
+        self::assertArrayHasKey('99', $modMenu['depth']);
         self::assertArrayHasKey('crawlaction', $modMenu);
+        self::assertArrayHasKey('start', $modMenu['crawlaction']);
+        self::assertArrayHasKey('log', $modMenu['crawlaction']);
+        self::assertArrayHasKey('multiprocess', $modMenu['crawlaction']);
         self::assertArrayHasKey('log_resultLog', $modMenu);
         self::assertArrayHasKey('log_feVars', $modMenu);
         self::assertArrayHasKey('processListMode', $modMenu);
         self::assertArrayHasKey('log_display', $modMenu);
+        self::assertArrayHasKey('all', $modMenu['log_display']);
+        self::assertArrayHasKey('pending', $modMenu['log_display']);
+        self::assertArrayHasKey('finished', $modMenu['log_display']);
         self::assertArrayHasKey('itemsPerPage', $modMenu);
+        self::assertArrayHasKey('5', $modMenu['itemsPerPage']);
+        self::assertArrayHasKey('10', $modMenu['itemsPerPage']);
+        self::assertArrayHasKey('50', $modMenu['itemsPerPage']);
+        self::assertArrayHasKey('0', $modMenu['itemsPerPage']);
     }
 
     /**

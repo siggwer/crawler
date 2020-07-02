@@ -181,11 +181,11 @@ class ProcessTest extends UnitTestCase
                 'countItemsAssigned' => 15,
                 'countItemsProcessed' => 20,
                 'expectedProgress' => 100.0,
-            ], 
+            ],
             'sdf' => [
                 'countItemsAssigned' => 100,
                 'countItemsProcessed' => 100,
-                'expectedProgress' => 100.0 
+                'expectedProgress' => 100.0,
             ],
             'result higher than 100, Testing the round if $res > 100 ' => [
                 'countItemsAssigned' => 100,
@@ -200,8 +200,18 @@ class ProcessTest extends UnitTestCase
             'Comma number that would round down' => [
                 'countItemsAssigned' => 14.3,
                 'countItemsProcessed' => 14,
-                'expectedProgress' => 100.0
-            ]
+                'expectedProgress' => 100.0,
+            ],
+            'To make sure that floor() break the result (mutation)' => [
+                'countItemsAssigned' => 99,
+                'countItemsProcessed' => 98,
+                'expectedProgress' => 99.0,
+            ],
+            'To make sure that ceil() break the result (mutation)' => [
+                'countItemsAssigned' => 95,
+                'countItemsProcessed' => 85,
+                'expectedProgress' => 89.0,
+            ],
         ];
     }
 

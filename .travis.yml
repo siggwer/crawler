@@ -142,7 +142,7 @@ jobs:
       before_install:
         - echo "keep xdebug"
       script:
-        - .Build/bin/infection --min-msi=7 --threads=4
+        - .Build/bin/infection --min-msi=10 --threads=4
 
 
       # Static Analysis

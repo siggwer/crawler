@@ -702,7 +702,7 @@ class BackendModule
     {
         $content = '';
         if (is_array($resultRow) && array_key_exists('result_data', $resultRow)) {
-            $requestContent = $this->jsonCompatibilityConverter->convert($resultRow['result_data']) ?: ['content' => ''];
+            $requestContent = $this->jsonCompatibilityConverter->convert($resultRow['result_data']) ?: [];
             if (! array_key_exists('content', $requestContent)) {
                 return $content;
             }
