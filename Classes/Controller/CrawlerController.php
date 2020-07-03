@@ -281,13 +281,11 @@ class CrawlerController implements LoggerAwareInterface
 
     /**
      * Set disabled status to prevent processes from being processed
-     *
-     * @param bool $disabled (optional, defaults to true)
      */
-    public function setDisabled($disabled = true): void
+    public function setDisabled(?bool $disabled = true): void
     {
         if ($disabled) {
-            GeneralUtility::writeFile($this->processFilename, '');
+            GeneralUtility::writeFile($this->processFilename, 'disabled');
         } elseif (is_file($this->processFilename)) {
             unlink($this->processFilename);
         }
@@ -295,10 +293,8 @@ class CrawlerController implements LoggerAwareInterface
 
     /**
      * Get disable status
-     *
-     * @return bool true if disabled
      */
-    public function getDisabled()
+    public function getDisabled(): bool
     {
         return is_file($this->processFilename);
     }

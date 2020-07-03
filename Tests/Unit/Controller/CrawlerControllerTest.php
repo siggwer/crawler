@@ -96,16 +96,35 @@ class CrawlerControllerTest extends UnitTestCase
      *
      * @dataProvider setAndGetDisabledDataProvider
      */
-    public function setAndGetDisabled(bool $disabled, bool $expected): void
+    public function setAndGetDisabled($disabled, bool $expected): void
     {
         $filenameWithPath = tempnam('/tmp', 'test_foo') ?: 'FileNameIsForceIfTempNamReturnedFalse.txt';
         $this->crawlerController->setProcessFilename($filenameWithPath);
-        $this->crawlerController->setDisabled($disabled);
+
+        // Not that elegant but testing that called without params gives the expected default.
+        if (null === $disabled) {
+            $this->crawlerController->setDisabled();
+        } else {
+            $this->crawlerController->setDisabled($disabled);
+        }
 
         self::assertEquals(
             $expected,
             $this->crawlerController->getDisabled()
         );
+
+        self::assertSame(
+            $expected,
+            is_file($filenameWithPath)
+        );
+
+        if($disabled){
+            self::assertSame(
+                'disabled',
+                file_get_contents($filenameWithPath)
+            );
+        }
+
     }
 
     /**
@@ -476,10 +495,10 @@ class CrawlerControllerTest extends UnitTestCase
     public function setAndGetDisabledDataProvider()
     {
         return [
-            //'setDisabeld with no param' => [
-            //    'disabled' => null,
-            //    'expected' => true,
-            //],
+            'setDisabled with no param' => [
+                'disabled' => null,
+                'expected' => true,
+            ],
             'setDisabled with true param' => [
                 'disabled' => true,
                 'expected' => true,
