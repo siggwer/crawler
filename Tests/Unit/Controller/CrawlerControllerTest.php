@@ -102,7 +102,7 @@ class CrawlerControllerTest extends UnitTestCase
         $this->crawlerController->setProcessFilename($filenameWithPath);
 
         // Not that elegant but testing that called without params gives the expected default.
-        if (null === $disabled) {
+        if ($disabled === null) {
             $this->crawlerController->setDisabled();
         } else {
             $this->crawlerController->setDisabled($disabled);
@@ -118,13 +118,12 @@ class CrawlerControllerTest extends UnitTestCase
             is_file($filenameWithPath)
         );
 
-        if($disabled){
+        if ($disabled) {
             self::assertSame(
                 'disabled',
                 file_get_contents($filenameWithPath)
             );
         }
-
     }
 
     /**

@@ -856,8 +856,6 @@ class CrawlerController implements LoggerAwareInterface
         if (empty($paramArray)) {
             return $urls;
         }
-        // shift first off stack:
-        reset($paramArray);
         $varName = key($paramArray);
         $valueSet = array_shift($paramArray);
 
