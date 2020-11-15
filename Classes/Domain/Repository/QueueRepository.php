@@ -31,6 +31,7 @@ namespace AOE\Crawler\Domain\Repository;
 use AOE\Crawler\Configuration\ExtensionConfigurationProvider;
 use AOE\Crawler\Domain\Model\Process;
 use Psr\Log\LoggerAwareInterface;
+use TYPO3\CMS\Core\Compatibility\PublicMethodDeprecationTrait;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -45,6 +46,15 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 class QueueRepository extends Repository implements LoggerAwareInterface
 {
     use \Psr\Log\LoggerAwareTrait;
+    use PublicMethodDeprecationTrait;
+
+    /**
+     * @var string[]
+     */
+    private $deprecatedPublicMethods = [
+        'countAllByProcessId' => 'Using QueueRepository->countAllByProcessId() is deprecated since 9.0.1 and will be removed in v11.x, please use queueRepository->findByProcessId()->count() instead',
+    ];
+
 
     /**
      * @var string
@@ -616,6 +626,7 @@ class QueueRepository extends Repository implements LoggerAwareInterface
      * @param string $processId
      *
      * @return bool|string
+     * @deprecated
      */
     public function countAllByProcessId($processId)
     {

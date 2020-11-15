@@ -14,8 +14,10 @@
 * CrawlerController->setDisabled()
 * CrawlerController->getProcessFilename()
 * CrawlerController->setProcessFilename()
+* QueueRepository->countAllByProcessId()
 * CrawlerController->accessMode
 * CrawlerController->processFilename
+
 
 ### Changed
 * Updated Rector, PHPStan, ECS for better static code analysis
