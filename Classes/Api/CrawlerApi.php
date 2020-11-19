@@ -151,6 +151,9 @@ class CrawlerApi
         $pageData = GeneralUtility::makeInstance(PageRepository::class)->getPage_noCheck($uid, true);
         $configurations = $crawler->getUrlsForPageRow($pageData);
         $configurations = $this->filterUnallowedConfigurations($configurations);
+
+        // Configuration Objects
+
         $downloadUrls = [];
         $duplicateTrack = [];
 

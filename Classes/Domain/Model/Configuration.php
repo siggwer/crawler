@@ -19,6 +19,7 @@ namespace AOE\Crawler\Domain\Model;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Assert\Assert;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
@@ -76,6 +77,47 @@ class Configuration extends AbstractEntity
      */
     protected $exclude = '';
 
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    public static function fromArray($array): self
+    {
+        Assert::that($array)
+            ->keyIsset('name','Name needs to be set to create a new Object from Array');
+
+        $configuration = new self($array['name']);
+
+        foreach($array as $key => $value) {
+            $property = self::getPropertyMap($key);
+            if (empty($property)) {
+                continue;
+            }
+            $setProperty = "set$property";
+            $configuration->${setProperty}($value);
+        }
+
+        return $configuration;
+    }
+
+    private function getPropertyMap($key): string
+    {
+        $propertyMap = [
+            'procInstrFilter' => 'ProcessingInstructionFilter',
+            'baseUrl' => 'BaseUrl',
+            'procInstrParams.'  => 'ProcessingInstructionParameters',
+            'force_ssl' => 'ForceSsl',
+            // Not sure if it be or fegroups
+            'userGroups' => 'FeGroups',
+            'exclude' => 'Exclude',
+            //'key'  => '',
+            'name'  => 'Name',
+        ];
+
+        return $propertyMap[$key] ?: '';
+    }
+
     /**
      * @return string
      */
@@ -125,7 +167,7 @@ class Configuration extends AbstractEntity
     }
 
     /**
-     * @return string
+     * @return string|array
      */
     public function getProcessingInstructionParameters()
     {
@@ -133,7 +175,7 @@ class Configuration extends AbstractEntity
     }
 
     /**
-     * @param string $processingInstructionParameters
+     * @param string|array $processingInstructionParameters
      */
     public function setProcessingInstructionParameters($processingInstructionParameters): void
     {

@@ -32,7 +32,9 @@ use AOE\Crawler\Configuration\ExtensionConfigurationProvider;
 use AOE\Crawler\Converter\JsonCompatibilityConverter;
 use AOE\Crawler\Crawler;
 use AOE\Crawler\CrawlStrategy\CrawlStrategyFactory;
+use AOE\Crawler\Domain\Model\Configuration;
 use AOE\Crawler\Domain\Model\Process;
+use AOE\Crawler\Domain\Model\Queue;
 use AOE\Crawler\Domain\Repository\ConfigurationRepository;
 use AOE\Crawler\Domain\Repository\ProcessRepository;
 use AOE\Crawler\Domain\Repository\QueueRepository;
@@ -624,41 +626,42 @@ class CrawlerController implements LoggerAwareInterface
 
         // Get configuration from tx_crawler_configuration records up the rootline
         $crawlerConfigurations = $this->configurationRepository->getCrawlerConfigurationRecordsFromRootLine($pageId);
+        /** @var Configuration $configurationRecord */
         foreach ($crawlerConfigurations as $configurationRecord) {
 
             // check access to the configuration record
-            if (empty($configurationRecord['begroups']) || $this->getBackendUser()->isAdmin() || $this->hasGroupAccess($this->getBackendUser()->user['usergroup_cached_list'], $configurationRecord['begroups'])) {
-                $pidOnlyList = implode(',', GeneralUtility::trimExplode(',', $configurationRecord['pidsonly'], true));
+            if (empty($configurationRecord->getBeGroups()) || $this->getBackendUser()->isAdmin() || $this->hasGroupAccess($this->getBackendUser()->user['usergroup_cached_list'], $configurationRecord->getBeGroups())) {
+                $pidOnlyList = implode(',', GeneralUtility::trimExplode(',', $configurationRecord->getPidsOnly(), true));
 
                 // process configuration if it is not page-specific or if the specific page is the current page:
                 // TODO: Check if $pidOnlyList can be kept as Array instead of imploded
-                if (! strcmp($configurationRecord['pidsonly'], '') || GeneralUtility::inList($pidOnlyList, strval($pageId))) {
-                    $key = $configurationRecord['name'];
+                if (! strcmp($configurationRecord->getPidsOnly(), '') || GeneralUtility::inList($pidOnlyList, strval($pageId))) {
+                    $key = $configurationRecord->getName();
 
                     // don't overwrite previously defined paramSets
                     if (! isset($res[$key])) {
 
                         /* @var $TSparserObject \TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser */
                         $TSparserObject = GeneralUtility::makeInstance(TypoScriptParser::class);
-                        $TSparserObject->parse($configurationRecord['processing_instruction_parameters_ts']);
+                        $TSparserObject->parse($configurationRecord->getProcessingInstructionParameters());
 
                         $subCfg = [
-                            'procInstrFilter' => $configurationRecord['processing_instruction_filter'],
+                            'procInstrFilter' => $configurationRecord->getProcessingInstructionFilter(),
                             'procInstrParams.' => $TSparserObject->setup,
-                            'baseUrl' => $configurationRecord['base_url'],
-                            'force_ssl' => (int) $configurationRecord['force_ssl'],
-                            'userGroups' => $configurationRecord['fegroups'],
-                            'exclude' => $configurationRecord['exclude'],
+                            'baseUrl' => $configurationRecord->getBaseUrl(),
+                            'force_ssl' => (int) $configurationRecord->isForceSsl(),
+                            'userGroups' => $configurationRecord->getFeGroups(),
+                            'exclude' => $configurationRecord->getExclude(),
                             'key' => $key,
                         ];
 
                         if (! in_array($pageId, $this->expandExcludeString($subCfg['exclude']), true)) {
                             $res[$key] = [];
                             $res[$key]['subCfg'] = $subCfg;
-                            $res[$key]['paramParsed'] = GeneralUtility::explodeUrl2Array($configurationRecord['configuration']);
+                            $res[$key]['paramParsed'] = GeneralUtility::explodeUrl2Array($configurationRecord->getConfiguration());
                             $res[$key]['paramExpanded'] = $this->expandParameters($res[$key]['paramParsed'], $pageId);
                             $res[$key]['URLs'] = $this->compileUrls($res[$key]['paramExpanded'], ['?id=' . $pageId]);
-                            $res[$key]['origin'] = 'tx_crawler_configuration_' . $configurationRecord['uid'];
+                            $res[$key]['origin'] = 'tx_crawler_configuration_' . $configurationRecord->getUid();
                         }
                     }
                 }
@@ -1071,7 +1074,7 @@ class CrawlerController implements LoggerAwareInterface
      *
      * @param integer $id Page ID
      * @param string $url Complete URL
-     * @param array $subCfg Sub configuration array (from TS config)
+     * @param Configuration|array $subCfg Sub configuration array (from TS config)
      * @param integer $tstamp Scheduled-time
      * @param string $configurationHash (optional) configuration hash
      * @param bool $skipInnerDuplicationCheck (optional) skip inner duplication check
@@ -1080,7 +1083,7 @@ class CrawlerController implements LoggerAwareInterface
     public function addUrl(
         $id,
         $url,
-        array $subCfg,
+        $subCfg,
         $tstamp,
         $configurationHash = '',
         $skipInnerDuplicationCheck = false
@@ -1093,16 +1096,22 @@ class CrawlerController implements LoggerAwareInterface
             'url' => $url,
         ];
 
+        // Creates a Configuration Object from array
+        if (is_array($subCfg)) {
+            $subCfg['name'] = $subCfg['name'] ?: 'Config without name';
+            $subCfg = Configuration::fromArray($subCfg);
+        }
+
         // fe user group simulation:
-        $uGs = implode(',', array_unique(GeneralUtility::intExplode(',', $subCfg['userGroups'], true)));
+        $uGs = implode(',', array_unique(GeneralUtility::intExplode(',', $subCfg->getFeGroups(), true)));
         if ($uGs) {
             $parameters['feUserGroupList'] = $uGs;
         }
 
         // Setting processing instructions
-        $parameters['procInstructions'] = GeneralUtility::trimExplode(',', $subCfg['procInstrFilter']);
-        if (is_array($subCfg['procInstrParams.'])) {
-            $parameters['procInstrParams'] = $subCfg['procInstrParams.'];
+        $parameters['procInstructions'] = GeneralUtility::trimExplode(',', $subCfg->getProcessingInstructionFilter());
+        if (is_array($subCfg->getProcessingInstructionParameters())) {
+            $parameters['procInstrParams'] = $subCfg->getProcessingInstructionParameters();
         }
 
         // Compile value array:
@@ -1116,7 +1125,7 @@ class CrawlerController implements LoggerAwareInterface
             'exec_time' => 0,
             'set_id' => (int) $this->setID,
             'result_data' => '',
-            'configuration' => $subCfg['key'],
+            'configuration' => $subCfg,
         ];
 
         if ($this->registerQueueEntriesInternallyOnly) {
@@ -1129,6 +1138,8 @@ class CrawlerController implements LoggerAwareInterface
             }
 
             if (empty($rows)) {
+                //$queueObject = Queue::fromArray($fieldArray);
+                //$this->queueRepository->add($queueObject);
                 $connectionForCrawlerQueue = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tx_crawler_queue');
                 $connectionForCrawlerQueue->insert(
                     'tx_crawler_queue',
@@ -1136,6 +1147,7 @@ class CrawlerController implements LoggerAwareInterface
                 );
                 $uid = $connectionForCrawlerQueue->lastInsertId('tx_crawler_queue', 'qid');
                 $rows[] = $uid;
+
                 $urlAdded = true;
 
                 $signalPayload = ['uid' => $uid, 'fieldArray' => $fieldArray];

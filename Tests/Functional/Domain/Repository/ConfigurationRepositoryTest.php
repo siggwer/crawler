@@ -19,6 +19,7 @@ namespace AOE\Crawler\Tests\Functional\Domain\Repository;
  * The TYPO3 project - inspiring people to share!
  */
 
+use AOE\Crawler\Domain\Model\Configuration;
 use AOE\Crawler\Domain\Repository\ConfigurationRepository;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -64,7 +65,8 @@ class ConfigurationRepositoryTest extends FunctionalTestCase
      */
     public function getCrawlerConfigurationRecordsFromRootLineReturnsEmptyArray(): void
     {
-        self::assertEmpty(
+        self::assertCount(
+            0,
             $this->subject->getCrawlerConfigurationRecordsFromRootLine(self::PAGE_WITHOUT_CONFIGURATIONS)
         );
     }
@@ -74,15 +76,16 @@ class ConfigurationRepositoryTest extends FunctionalTestCase
      */
     public function getCrawlerConfigurationRecordsFromRootLineReturnsObjects(): void
     {
-        $configurations = $this->subject->getCrawlerConfigurationRecordsFromRootLine(5);
+        $configurations = $this->subject->getCrawlerConfigurationRecordsFromRootLine(4);
 
-        self::assertCount(
-            4,
-            $configurations
+        self::assertEquals(
+            2,
+            $configurations->count()
         );
 
+        /** @var Configuration $configuration */
         foreach ($configurations as $configuration) {
-            self::assertContains($configuration['uid'], [1, 5, 6, 8]);
+            self::assertContains($configuration->getUid(), [1, 8]);
         }
     }
 
@@ -91,9 +94,16 @@ class ConfigurationRepositoryTest extends FunctionalTestCase
      */
     public function getCrawlerConfigurationRecords(): void
     {
-        self::assertCount(
+        $configurations = $this->subject->getCrawlerConfigurationRecords();
+
+        self::assertEquals(
             4,
-            $this->subject->getCrawlerConfigurationRecords()
+            $configurations->count()
         );
+
+        /** @var Configuration $configuration */
+        foreach ($configurations as $configuration) {
+            self::assertContains($configuration->getUid(), [1, 5, 6, 8]);
+        }
     }
 }

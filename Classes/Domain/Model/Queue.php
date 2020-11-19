@@ -29,6 +29,7 @@ namespace AOE\Crawler\Domain\Model;
  ***************************************************************/
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
  * Class Queue
@@ -96,9 +97,25 @@ class Queue extends AbstractEntity
     protected $processIdCompleted = '';
 
     /**
-     * @var string
+     * @var ObjectStorage<Configuration>
      */
-    protected $configuration = '';
+    protected $configuration;
+
+    public static function fromArray(array $array): self
+    {
+        $queue = new self();
+        $queue->setPageId($array['page_id']);
+        $queue->setParameters($array['parameters']);
+        $queue->setParametersHash($array['parameters']);
+        $queue->setConfiguration($array['configuration']);
+        $queue->setConfigurationHash($array['configuration_hash']);
+        $queue->setScheduled($array['scheduled']);
+        $queue->setExecTime($array['exec_time']);
+        $queue->setSetId($array['set_id']);
+        $queue->setResultData($array['result_data']);
+
+        return $queue;
+    }
 
     /**
      * @return int
@@ -293,17 +310,14 @@ class Queue extends AbstractEntity
     }
 
     /**
-     * @return string
+     * @return ObjectStorage
      */
     public function getConfiguration()
     {
         return $this->configuration;
     }
 
-    /**
-     * @param string $configuration
-     */
-    public function setConfiguration($configuration): void
+    public function setConfiguration(Configuration $configuration): void
     {
         $this->configuration = $configuration;
     }

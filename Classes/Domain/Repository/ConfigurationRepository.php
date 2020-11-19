@@ -20,12 +20,7 @@ namespace AOE\Crawler\Domain\Repository;
  */
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
-use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
@@ -34,30 +29,26 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 class ConfigurationRepository extends Repository
 {
     /**
-     * @var string
+     * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      */
-    protected $tableName = 'tx_crawler_configuration';
-
-    public function getCrawlerConfigurationRecords(): array
+    public function getCrawlerConfigurationRecords()
     {
-        $records = [];
-        $queryBuilder = $this->createQueryBuilder();
-        $statement = $queryBuilder
-            ->select('*')
-            ->from($this->tableName)
-            ->execute();
-
-        while ($row = $statement->fetch()) {
-            $records[] = $row;
-        }
-
-        return $records;
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
+        $query->getQuerySettings()->setIncludeDeleted(false);
+        return $query->execute();
     }
 
     /**
      * Traverses up the rootline of a page and fetches all crawler records.
      */
-    public function getCrawlerConfigurationRecordsFromRootLine(int $pageId): array
+
+    /**
+     * @param int $pageId
+     * @return array|QueryInterface
+     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
+     */
+    public function getCrawlerConfigurationRecordsFromRootLine(int $pageId)
     {
         $pageIdsInRootLine = [];
         $rootLine = BackendUtility::BEgetRootLine($pageId);
@@ -66,24 +57,15 @@ class ConfigurationRepository extends Repository
             $pageIdsInRootLine[] = (int) $pageInRootLine['uid'];
         }
 
-        $queryBuilder = $this->createQueryBuilder();
-        $queryBuilder
-            ->getRestrictions()->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
-            ->add(GeneralUtility::makeInstance(HiddenRestriction::class));
-        $configurationRecordsForCurrentPage = $queryBuilder
-            ->select('*')
-            ->from($this->tableName)
-            ->where(
-                $queryBuilder->expr()->in('pid', $queryBuilder->createNamedParameter($pageIdsInRootLine, Connection::PARAM_INT_ARRAY))
-            )
-            ->execute()
-            ->fetchAll();
-        return is_array($configurationRecordsForCurrentPage) ? $configurationRecordsForCurrentPage : [];
-    }
+        if (empty($pageIdsInRootLine)) {
+            return [];
+        }
 
-    protected function createQueryBuilder(): QueryBuilder
-    {
-        return GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
+        $query->getQuerySettings()->setIncludeDeleted(false);
+        return $query->matching(
+            $query->in('pid', $pageIdsInRootLine)
+        )->execute();
     }
 }

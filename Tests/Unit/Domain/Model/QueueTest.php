@@ -28,6 +28,7 @@ namespace AOE\Crawler\Tests\Unit\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use AOE\Crawler\Domain\Model\Configuration;
 use AOE\Crawler\Domain\Model\Queue;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 
@@ -48,8 +49,8 @@ class QueueTest extends UnitTestCase
     public function getterAndSettersTest(): void
     {
         $execTime = 123456;
-        $configuration = 'Test Configuration';
-        $configurationHash = sha1($configuration);
+        $configuration = new Configuration('Test Configuration');
+        $configurationHash = sha1(serialize($configuration));
         $processId = '124';
         $pageId = 543;
         $parameters = 'ParameterOne, ParameterTwo';

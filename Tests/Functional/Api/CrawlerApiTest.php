@@ -323,7 +323,7 @@ class CrawlerApiTest extends FunctionalTestCase
         self::assertEquals(
             $expectedParameter,
             $queueItems[0]['parameters'],
-            'Wrong queue parameters created by crawler lib for configuration record'
+            'Wrong queue parameters created by crawler lib for configuration record - QueueItems[0]'
         );
 
         self::assertEquals($queueItems[1]['page_id'], 7);
@@ -331,13 +331,13 @@ class CrawlerApiTest extends FunctionalTestCase
         self::assertEquals(
             $expectedParameter,
             $queueItems[1]['parameters'],
-            'Wrong queue parameters created by crawler lib for configuration record'
+            'Wrong queue parameters created by crawler lib for configuration record - QueueItems[1]'
         );
 
         self::assertEquals(
             $this->queueRepository->countUnprocessedItems(),
             2,
-            'Could not add pages to queue configured by record'
+            'Could not add pages to queue configured by record 3'
         );
     }
 

@@ -29,6 +29,7 @@ namespace AOE\Crawler\Tests\Functional\Controller;
  ***************************************************************/
 
 use AOE\Crawler\Controller\CrawlerController;
+use AOE\Crawler\Domain\Model\Configuration;
 use AOE\Crawler\Domain\Repository\QueueRepository;
 use AOE\Crawler\Value\QueueFilter;
 use Nimut\TestingFramework\MockObject\AccessibleMockObjectInterface;
@@ -218,7 +219,7 @@ class CrawlerControllerTest extends FunctionalTestCase
      * @test
      * @dataProvider addUrlDataProvider
      */
-    public function addUrl(int $id, string $url, array $subCfg, int $tstamp, string $configurationHash, bool $skipInnerDuplicationCheck, array $mockedDuplicateRowResult, bool $registerQueueEntriesInternallyOnly, bool $expected): void
+    public function addUrl(int $id, string $url, Configuration $subCfg, int $tstamp, string $configurationHash, bool $skipInnerDuplicationCheck, array $mockedDuplicateRowResult, bool $registerQueueEntriesInternallyOnly, bool $expected): void
     {
         $mockedCrawlerController = $this->getAccessibleMock(CrawlerController::class, ['getDuplicateRowsIfExist']);
         $mockedCrawlerController->expects($this->any())->method('getDuplicateRowsIfExist')->withAnyParameters()->willReturn($mockedDuplicateRowResult);
@@ -325,18 +326,26 @@ class CrawlerControllerTest extends FunctionalTestCase
 
     public function addUrlDataProvider(): array
     {
+        $configurationOne = new Configuration('some-key');
+        $configurationOne->setProcessingInstructionFilter('tx_crawler_post');
+        $configurationOne->setProcessingInstructionParameters('test');
+        $configurationOne->setFeGroups('12,14');
+
+        $configurationTwo = new Configuration('some-key');
+
         return [
             'Queue entry added' => [
                 'id' => 0,
                 'url' => '',
-                'subCfg' => [
+                /*'subCfg' => [
                     'key' => 'some-key',
                     'procInstrFilter' => 'tx_crawler_post',
                     'procInstrParams.' => [
                         'action' => true,
                     ],
                     'userGroups' => '12,14',
-                ],
+                ],*/
+                'subCfg' => $configurationOne,
                 'tstamp' => 1563287062,
                 'configurationHash' => '',
                 'skipInnerDuplicationCheck' => false,
@@ -347,7 +356,7 @@ class CrawlerControllerTest extends FunctionalTestCase
             'Queue entry is NOT added, due to duplication check return not empty array (mocked)' => [
                 'id' => 0,
                 'url' => '',
-                'subCfg' => ['key' => 'some-key'],
+                'subCfg' => $configurationTwo,
                 'tstamp' => 1563287062,
                 'configurationHash' => '',
                 'skipInnerDuplicationCheck' => false,
@@ -358,7 +367,7 @@ class CrawlerControllerTest extends FunctionalTestCase
             'Queue entry is added, due to duplication is ignored' => [
                 'id' => 0,
                 'url' => '',
-                'subCfg' => ['key' => 'some-key'],
+                'subCfg' => $configurationTwo,
                 'tstamp' => 1563287062,
                 'configurationHash' => '',
                 'skipInnerDuplicationCheck' => true,
@@ -369,7 +378,7 @@ class CrawlerControllerTest extends FunctionalTestCase
             'Queue entry is NOT added, due to registerQueueEntriesInternalOnly' => [
                 'id' => 0,
                 'url' => '',
-                'subCfg' => ['key' => 'some-key'],
+                'subCfg' => $configurationTwo,
                 'tstamp' => 1563287062,
                 'configurationHash' => '',
                 'skipInnerDuplicationCheck' => true,
