@@ -95,7 +95,7 @@ class Configuration extends AbstractEntity
                 continue;
             }
             $setProperty = "set$property";
-            $configuration->${setProperty}($value);
+            $configuration->$setProperty($value);
         }
 
         return $configuration;
@@ -108,11 +108,14 @@ class Configuration extends AbstractEntity
             'baseUrl' => 'BaseUrl',
             'procInstrParams.'  => 'ProcessingInstructionParameters',
             'force_ssl' => 'ForceSsl',
+            'configuration' => 'Configuration',
             // Not sure if it be or fegroups
             'userGroups' => 'FeGroups',
             'exclude' => 'Exclude',
             //'key'  => '',
             'name'  => 'Name',
+            'pid' => 'Pid'
+
         ];
 
         return $propertyMap[$key] ?: '';

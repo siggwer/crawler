@@ -38,6 +38,33 @@ class ConfigurationTest extends UnitTestCase
     /**
      * @test
      */
+    public function fromArrayReturnsExpectedObject(): void
+    {
+        $expectedObject = new Configuration('Test Configuration');
+        $expectedObject->setPid(7);
+        $expectedObject->setProcessingInstructionFilter('tx_staticpub_publish');
+        $expectedObject->setProcessingInstructionParameters('tx_staticpub_publish.includeResources=relPath');
+        $expectedObject->setConfiguration('&amp;S=CRAWL&amp;L=[0]');
+
+        $configurationArray = [
+            'name' => 'Test Configuration',
+            'pid' => 7,
+            'procInstrFilter' => 'tx_staticpub_publish',
+            'procInstrParams.' => 'tx_staticpub_publish.includeResources=relPath',
+            'configuration' => '&amp;S=CRAWL&amp;L=[0]'
+        ];
+
+        self::assertEquals(
+            $expectedObject,
+            Configuration::fromArray($configurationArray)
+        );
+    }
+
+
+
+    /**
+     * @test
+     */
     public function setterAndGetters(): void
     {
         $name = 'Default Configuration';
